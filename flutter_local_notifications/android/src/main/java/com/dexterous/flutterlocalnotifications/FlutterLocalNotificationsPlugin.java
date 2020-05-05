@@ -6,25 +6,25 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.ContactsContract;
 import android.text.Html;
 import android.text.Spanned;
-
-import androidx.annotation.NonNull;
-import androidx.core.app.AlarmManagerCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.app.Person;
-import androidx.core.graphics.drawable.IconCompat;
 
 import com.dexterous.flutterlocalnotifications.models.IconSource;
 import com.dexterous.flutterlocalnotifications.models.MessageDetails;
@@ -46,6 +46,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,6 +55,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.AlarmManagerCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.Person;
+import androidx.core.graphics.drawable.IconCompat;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -357,7 +364,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         return bitmap;
     }
 
-    private static IconCompat getIconFromSource(Context context, String iconPath, IconSource iconSource) {
+    private static IconCompat getIconFromSource(Context context, String iconPath, IconSource iconSource, Boolean contactIconHighRes) {
         IconCompat icon = null;
         switch (iconSource) {
             case DrawableResource:
@@ -380,10 +387,49 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                     throw new RuntimeException(e);
                 }
                 break;
+            case ContactId:
+                try {
+                    if (contactIconHighRes == null) {
+                        contactIconHighRes = false;
+                    }
+                    final Uri uri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, Long.parseLong(iconPath));
+                    final InputStream input = ContactsContract.Contacts.openContactPhotoInputStream(context.getContentResolver(), uri, contactIconHighRes);
+
+                    if (input == null) return null;
+
+                    Bitmap bitmap = BitmapFactory.decodeStream(input);
+                    bitmap = getCroppedBitmap(bitmap);
+                    icon = IconCompat.createWithBitmap(bitmap);
+                    input.close();
+                } catch (final IOException e){
+                    throw new RuntimeException(e);
+                }
             default:
                 break;
         }
         return icon;
+    }
+
+    static Bitmap getCroppedBitmap(Bitmap bitmap) {
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
+                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        // canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+        canvas.drawCircle(bitmap.getWidth() / 2, bitmap.getHeight() / 2,
+                bitmap.getWidth() / 2, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+        //Bitmap _bmp = Bitmap.createScaledBitmap(output, 60, 60, false);
+        //return _bmp;
+        return output;
     }
 
     /**
@@ -591,7 +637,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         Person.Builder personBuilder = new Person.Builder();
         personBuilder.setBot(BooleanUtils.getValue(personDetails.bot));
         if (personDetails.icon != null && personDetails.iconBitmapSource != null) {
-            personBuilder.setIcon(getIconFromSource(context, personDetails.icon, personDetails.iconBitmapSource));
+            personBuilder.setIcon(getIconFromSource(context, personDetails.icon, personDetails.iconBitmapSource, personDetails.contactIconHighRes));
         }
         personBuilder.setImportant(BooleanUtils.getValue(personDetails.important));
         if (personDetails.key != null) {

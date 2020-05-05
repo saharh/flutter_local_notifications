@@ -4,5 +4,6 @@ public enum IconSource {
     DrawableResource,
     BitmapFilePath,
     ContentUri,
-    FlutterBitmapAsset
+    FlutterBitmapAsset,
+    ContactId
 }

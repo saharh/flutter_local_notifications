@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -688,12 +689,21 @@ class _HomePageState extends State<HomePage> {
       uri: 'tel:1234567890',
       icon: DrawableResourceAndroidIcon('me'),
     );
+
+//    Iterable<Contact> contacts = await ContactsService.getContactsForPhone("+1");
+//    Contact first = contacts.first;
     var coworker = Person(
       name: 'Coworker',
       key: '2',
       uri: 'tel:9876543210',
       icon: FlutterBitmapAssetAndroidIcon('icons/coworker.png'),
     );
+//    var coworker = Person(
+//      name: 'Coworker',
+//      key: '2',
+//      uri: 'tel:9876543210',
+//      icon: ContactIdAndroidIcon(first.identifier, false)
+//    );
     // download the icon that would be use for the lunch bot person
     var largeIconPath = await _downloadAndSaveFile(
         'http://via.placeholder.com/48x48', 'largeIcon');
@@ -707,11 +717,11 @@ class _HomePageState extends State<HomePage> {
     messages.add(Message('Hi', DateTime.now(), null));
     messages.add(Message(
         'What\'s up?', DateTime.now().add(Duration(minutes: 5)), coworker));
-    messages.add(Message(
-        'Lunch?', DateTime.now().add(Duration(minutes: 10)), null,
-        dataMimeType: 'image/png', dataUri: imageUri));
-    messages.add(Message('What kind of food would you prefer?',
-        DateTime.now().add(Duration(minutes: 10)), lunchBot));
+//    messages.add(Message(
+//        'Lunch?', DateTime.now().add(Duration(minutes: 10)), null,
+//        dataMimeType: 'image/png', dataUri: imageUri));
+//    messages.add(Message('What kind of food would you prefer?',
+//        DateTime.now().add(Duration(minutes: 10)), lunchBot));
     var messagingStyle = MessagingStyleInformation(me,
         groupConversation: true,
         conversationTitle: 'Team lunch',

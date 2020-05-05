@@ -80,6 +80,7 @@ public class NotificationDetails {
     private static final String TIMESTAMP = "timestamp";
     private static final String BOT = "bot";
     private static final String ICON_SOURCE = "iconSource";
+    private static final String CONTACT_ICON_HIGH_RES = "contactIconHighRes";
     private static final String IMPORTANT = "important";
     private static final String KEY = "key";
     private static final String NAME = "name";
@@ -343,7 +344,8 @@ public class NotificationDetails {
         String key = (String) person.get(KEY);
         String name = (String) person.get(NAME);
         String uri = (String) person.get(URI);
-        return new PersonDetails(bot, icon, iconSource, important, key, name, uri);
+        Boolean contactIconHighRes = (Boolean) person.get(CONTACT_ICON_HIGH_RES);
+        return new PersonDetails(bot, icon, iconSource, important, key, name, uri, contactIconHighRes);
     }
 
     @SuppressWarnings("unchecked")

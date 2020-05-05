@@ -65,6 +65,12 @@ class Person {
         'icon': icon.icon,
         'iconSource': AndroidIconSource.FlutterBitmapAsset.index,
       };
+    } else if (icon is ContactIdAndroidIcon) {
+      return <String, dynamic>{
+        'icon': icon.icon,
+        'iconSource': AndroidIconSource.ContactId.index,
+        'contactIconHighRes' : (icon as ContactIdAndroidIcon).highRes
+      };
     } else {
       return <String, dynamic>{};
     }

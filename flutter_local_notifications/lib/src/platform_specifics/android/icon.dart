@@ -58,3 +58,13 @@ class FlutterBitmapAssetAndroidIcon implements AndroidIcon {
   @override
   String get icon => _icon;
 }
+
+class ContactIdAndroidIcon implements AndroidIcon {
+  const ContactIdAndroidIcon(this._contactId, [this.highRes = false]);
+
+  final bool highRes;
+  final String _contactId;
+
+  @override
+  String get icon => _contactId;
+}
