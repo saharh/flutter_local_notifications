@@ -110,7 +110,7 @@ extension PersonMapper on Person {
     } else if (icon is ContactIdAndroidIcon) {
       return <String, Object>{
         'icon': icon!.icon,
-        'iconSource': AndroidIconSource.ContactId.index,
+        'iconSource': AndroidIconSource.contactId.index,
         'contactIconHighRes' : (icon as ContactIdAndroidIcon).highRes
       };
     } else {

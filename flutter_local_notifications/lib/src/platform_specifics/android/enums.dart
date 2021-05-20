@@ -19,10 +19,10 @@ enum AndroidIconSource {
   contentUri,
 
   /// A Flutter asset that is a bitmap.
-  flutterBitmapAsset
+  flutterBitmapAsset,
   
   /// Icon by Contact Id
-  ContactId
+  contactId
 }
 
 /// The available notification styles on Android.
