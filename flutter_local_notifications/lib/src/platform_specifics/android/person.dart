@@ -1,13 +1,12 @@
-import 'package:flutter_local_notifications/src/platform_specifics/android/icon.dart';
-
-import 'enums.dart';
+import 'icon.dart';
 
 /// Details of a person e.g. someone who sent a message.
 class Person {
+  /// Constructs an instance of [Person].
   const Person({
-    this.bot,
+    this.bot = false,
     this.icon,
-    this.important,
+    this.important = false,
     this.key,
     this.name,
     this.uri,
@@ -17,62 +16,17 @@ class Person {
   final bool bot;
 
   /// Icon for this person.
-  final AndroidIcon icon;
+  final AndroidIcon? icon;
 
   /// Whether or not this is an important person.
   final bool important;
 
   /// Unique identifier for this person.
-  final String key;
+  final String? key;
 
   /// Name of this person.
-  final String name;
+  final String? name;
 
   /// Uri for this person.
-  final String uri;
-
-  /// Creates a [Map] object that describes the [Person] object.
-  ///
-  /// Mainly for internal use to send the data over a platform channel.
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'bot': bot,
-      'important': important,
-      'key': key,
-      'name': name,
-      'uri': uri
-    }..addAll(_convertIconToMap());
-  }
-
-  Map<String, dynamic> _convertIconToMap() {
-    if (icon is DrawableResourceAndroidIcon) {
-      return <String, dynamic>{
-        'icon': icon.icon,
-        'iconSource': AndroidIconSource.DrawableResource.index,
-      };
-    } else if (icon is BitmapFilePathAndroidIcon) {
-      return <String, dynamic>{
-        'icon': icon.icon,
-        'iconSource': AndroidIconSource.BitmapFilePath.index,
-      };
-    } else if (icon is ContentUriAndroidIcon) {
-      return <String, dynamic>{
-        'icon': icon.icon,
-        'iconSource': AndroidIconSource.ContentUri.index,
-      };
-    } else if (icon is FlutterBitmapAssetAndroidIcon) {
-      return <String, dynamic>{
-        'icon': icon.icon,
-        'iconSource': AndroidIconSource.FlutterBitmapAsset.index,
-      };
-    } else if (icon is ContactIdAndroidIcon) {
-      return <String, dynamic>{
-        'icon': icon.icon,
-        'iconSource': AndroidIconSource.ContactId.index,
-        'contactIconHighRes' : (icon as ContactIdAndroidIcon).highRes
-      };
-    } else {
-      return <String, dynamic>{};
-    }
-  }
+  final String? uri;
 }
